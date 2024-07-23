@@ -9,18 +9,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import woopaca.jspcafe.resolver.RequestParametersResolver;
 import woopaca.jspcafe.service.UserService;
-import woopaca.jspcafe.servlet.dto.MembersResponse;
-import woopaca.jspcafe.servlet.dto.SignUpRequest;
+import woopaca.jspcafe.servlet.dto.UserProfile;
 
 import java.io.IOException;
-import java.util.List;
 
-@WebServlet("/users")
-public class UsersServlet extends HttpServlet {
+@WebServlet("/users/*")
+public class UserProfileServlet extends HttpServlet {
 
-    private final Logger log = LoggerFactory.getLogger(UsersServlet.class);
+    private final Logger log = LoggerFactory.getLogger(UserProfileServlet.class);
 
     private UserService userService;
 
@@ -31,29 +28,20 @@ public class UsersServlet extends HttpServlet {
         this.userService = (UserService) servletContext.getAttribute("userService");
     }
 
-    /**
-     * 회원가입 진행
-     */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            SignUpRequest signUpRequest = RequestParametersResolver.resolve(request, SignUpRequest.class);
-            userService.signUp(signUpRequest);
-            response.sendRedirect("/users");
+            String uri = request.getRequestURI();
+            String userId = uri.substring(uri.lastIndexOf("/") + 1);
+            UserProfile profile = userService.getUserProfile(userId);
+            request.setAttribute("profile", profile);
+            request.getRequestDispatcher("/user/profile.jsp")
+                    .forward(request, response);
         } catch (IllegalArgumentException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
         } catch (RuntimeException e) {
             log.error(e.getMessage(), e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "서버 오류");
         }
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<MembersResponse> members = userService.getAllMembers();
-        request.setAttribute("members", members);
-        request.setAttribute("membersCount", members.size());
-        request.getRequestDispatcher("/user/list.jsp")
-                .forward(request, response);
     }
 }
