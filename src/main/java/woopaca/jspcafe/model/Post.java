@@ -11,7 +11,7 @@ public class Post {
     private LocalDateTime writtenAt;
     private String writer;
 
-    public Post(Long id, String title, String content, int viewCount, LocalDateTime writtenAt, String writer) {
+    public Post(Long id, String title, String content, Integer viewCount, LocalDateTime writtenAt, String writer) {
         this.id = id;
         this.title = title;
         this.content = content;
