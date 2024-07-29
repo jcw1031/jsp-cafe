@@ -15,7 +15,7 @@ public class AuthService {
         this.userRepository = userRepository;
     }
 
-    public Authentication authentication(LoginRequest loginRequest) {
+    public Authentication authenticate(LoginRequest loginRequest) {
         String username = loginRequest.username();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 로그인 실패."));
