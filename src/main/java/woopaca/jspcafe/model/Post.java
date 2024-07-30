@@ -57,6 +57,11 @@ public class Post {
         this.viewCount++;
     }
 
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)

@@ -13,7 +13,7 @@
 <body>
 <div id="container">
   <jsp:include page="${pageContext.request.contextPath}/common/header.jsp" />
-  <form id="post-form" method="post" action="${pageContext.request.contextPath}/posts/edit/${post.id()}">
+  <form id="post-form" action="${pageContext.request.contextPath}/posts/${post.id()}">
     <div id="form-title">
       글 수정
     </div>
@@ -27,8 +27,35 @@
       <textarea name="content" required minlength="2" maxlength="1000" id="content"
                 placeholder="글의 내용을 입력해주세요"><c:out value="${post.content()}" /></textarea>
     </div>
-    <button id="post-submit">수정 완료!</button>
+    <div id="post-submit" onclick="handleSubmit()">수정 완료!</div>
   </form>
 </div>
+<script>
+  document.getElementById('post-form').removeEventListener('submit', (e) => e.preventDefault());
+
+  const handleSubmit = async () => {
+    const form = document.getElementById('post-form');
+    const formData = new URLSearchParams(new FormData(form)).toString();
+
+    let action = form.action;
+    console.log('action: ', action);
+    let response = await fetch(action, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: formData,
+    });
+
+    if (response.ok) {
+      window.location.href = '/posts/' + ${post.id()};
+    } else {
+      let body = await response.text();
+      document.open();
+      document.write(body);
+      document.close();
+    }
+  };
+</script>
 </body>
 </html>
