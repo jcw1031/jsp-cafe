@@ -10,14 +10,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import woopaca.jspcafe.model.Authentication;
-import woopaca.jspcafe.resolver.InputStreamResolver;
 import woopaca.jspcafe.resolver.QueryStringResolver;
 import woopaca.jspcafe.service.PostService;
 import woopaca.jspcafe.servlet.dto.request.PostEditRequest;
 import woopaca.jspcafe.servlet.dto.response.PostDetailsResponse;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.stream.Collectors;
 
 @MultipartConfig
 @WebServlet("/posts/*")
@@ -35,6 +34,10 @@ public class PostsServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String pathInfo = request.getPathInfo();
+        if (pathInfo.contains("replies")) {
+            // forwarding?
+        }
+
         Long postId = Long.parseLong(pathInfo.substring(1));
         request.setAttribute("postId", postId);
         super.service(request, response);
@@ -51,18 +54,20 @@ public class PostsServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Long postId = (Long) request.getAttribute("postId");
-        InputStream inputStream = request.getInputStream();
-        String queryString = InputStreamResolver.convertToString(inputStream);
+        String queryString = request.getReader()
+                .lines()
+                .collect(Collectors.joining());
         PostEditRequest postEditRequest = QueryStringResolver.resolve(queryString, PostEditRequest.class);
+
         HttpSession session = request.getSession();
         Authentication authentication = (Authentication) session.getAttribute("authentication");
         postService.updatePost(postId, postEditRequest, authentication);
     }
 
     @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
         Long postId = (Long) request.getAttribute("postId");
         HttpSession session = request.getSession();
         Authentication authentication = (Authentication) session.getAttribute("authentication");
