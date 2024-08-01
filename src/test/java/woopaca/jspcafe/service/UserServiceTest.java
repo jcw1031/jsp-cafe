@@ -25,8 +25,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class UserServiceTest {
 
-    UserService userService;
-    UserRepository userRepository;
+    private UserService userService;
+    private UserRepository userRepository;
 
     @BeforeEach
     void setUp() {
