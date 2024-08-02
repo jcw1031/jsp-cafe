@@ -2,6 +2,8 @@ package woopaca.jspcafe.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -14,6 +16,7 @@ import java.util.function.Function;
 
 public final class JdbcTemplate {
 
+    private static final Logger log = LoggerFactory.getLogger(JdbcTemplate.class);
     private final DataSource dataSource;
 
     public JdbcTemplate() {
@@ -21,6 +24,8 @@ public final class JdbcTemplate {
         String username = MySQLProperties.getUsername();
         String password = MySQLProperties.getPassword();
         HikariConfig hikariConfig = new HikariConfig();
+        log.info("url: {}", url);
+        log.info("username: {}", username);
         hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
         hikariConfig.setJdbcUrl(url);
         hikariConfig.setUsername(username);
