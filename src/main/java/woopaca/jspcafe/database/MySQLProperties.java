@@ -1,10 +1,15 @@
 package woopaca.jspcafe.database;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 public class MySQLProperties {
+
+    private static final Logger log = LoggerFactory.getLogger(MySQLProperties.class);
 
     private static final String url;
     private static final String username;
@@ -26,6 +31,8 @@ public class MySQLProperties {
         url = properties.getProperty("db.url");
         username = properties.getProperty("db.username");
         password = properties.getProperty("db.password");
+        log.info("url: {}", url);
+        log.info("username: {}", username);
     }
 
     private MySQLProperties() {
