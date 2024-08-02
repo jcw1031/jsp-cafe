@@ -57,7 +57,7 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("[ERROR] 게시글을 찾을 수 없습니다."));
         if (post.isDeleted()) {
-            throw new NotFoundException("[ERROR] 삭제된 게시글입니다.");
+            throw new BadRequestException("[ERROR] 삭제된 게시글입니다.");
         }
 
         updateViewCount(post);
